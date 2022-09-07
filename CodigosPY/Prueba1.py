@@ -7,11 +7,11 @@ training_data, validation_data , test_data = Mnist_Loader.load_data_wrapper()
 training_data = list(training_data)
 test_data = list(test_data)
 
-net=Network.Network([784,50,10])
+net=Network.Network([784,45,10])
 
-net.SGD( training_data, 30, 10, 3, test_data=test_data)
+net.SGD( training_data, 35, 10, 2.7, test_data=test_data)
 
-archivo = open("red_prueba.pkl",'wb')
+archivo = open("red_prueba1.pkl",'wb')
 pickle.dump(net,archivo)
 archivo.close()
 exit()
