@@ -85,7 +85,7 @@ model.compile(optimizer=Adam(),metrics=['loss']) #RMSprop(learning_rate=0.01)
 Neural network testing.
 Plot of analytical solution vs. the solution predicted by the network.
 """
-
+############
 NData = 300
 minV = -5
 maxV = 5
