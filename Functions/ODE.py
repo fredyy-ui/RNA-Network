@@ -6,7 +6,9 @@ from tensorflow.keras.optimizers import RMSprop, Adam
 
 from matplotlib import pyplot as plt 
 import numpy as np
-#Function
+"""
+Solución de la ODE: x*y'[x] + y = x*x*Cos[x] y[0]=0 
+"""
 def Funti(x):
     return (2*np.cos(x)-(2/x)*np.sin(x)+x*np.sin(x))
 
