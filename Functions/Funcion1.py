@@ -41,6 +41,9 @@ Neural network training.
 model.compile(loss='mse',optimizer=RMSprop(learning_rate=0.001)) #, metrics=['accuracy']
 history = model.fit(x_train, y_train, batch_size=50, epochs=110, verbose=1)
 
+#Guardar Modelo
+#model.save('Function2.h5')
+
 """
 Test of the neural network and plot of the function with respect to 
 the function predicted by the network. 
