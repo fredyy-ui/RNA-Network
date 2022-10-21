@@ -3,11 +3,20 @@ from tensorflow import keras
 from tensorflow.keras.models import Sequential 
 from tensorflow.keras.layers import Dense, Dropout 
 from tensorflow.keras.optimizers import RMSprop, Adam 
+import numpy as np 
+#Library for graphing.
+import matplotlib.pyplot as plt 
+"""
+Solución de la ODE: y''[x] + y[x]=0 y'[0]=-0.5 y[0]=1
+"""
+def Solve(x):
+    return (1*tf.math.cos(x)-0.5*tf.math.sin(x))
+"""
+Inheritance of a class.  A class is modified from one already defined, 
+in this case the "Sequential " class. Super" is used to say that it is 
+a subclass of the original one. 
+"""
 
-from matplotlib import pyplot as plt 
-import numpy as np
-#herencia de una clase, se modifica una clase ya hecha
-#constructor superr
 class ODEsolver(Sequential): 
     def __init__(self, **kwargs): 
         super().__init__(**kwargs)
@@ -20,7 +29,7 @@ class ODEsolver(Sequential):
     def train_step(self, data):
         batch_size = tf.shape(data)[0]
         x = tf.random.uniform((batch_size, 1), minval= -5, maxval=5)
-        x0 = tf.random.uniform((batch_size, 1), minval= -5, maxval=5)
+        x_0 =tf.zeros((batch_size,1))
 
 
         with tf.GradientTape() as tape: #calcular los gradientes de pesos y bias
@@ -28,15 +37,18 @@ class ODEsolver(Sequential):
             with tf.GradientTape(persistent=True) as g:
                 g.watch(x) #vigila las operaciones que se hagan con x
                 #tape2.watch(x0)
-                with tf.GradientTape() as gg:
+                with tf.GradientTape(persistent=True) as gg:
                     gg.watch(x)
+                    gg.watch(x_0)
                     y_pred = self(x, training=True) #evalua en x
+                    y_0 = self(x_0, training=True)
                 
                 dy = gg.gradient(y_pred, x) #deriva lo que predice la red con respecto a x
-                
+                dy_0 = gg.gradient(y_0, x_0)
+
                 #x_o =tf.zeros((batch_size,1))
                 #y_o = self(x_o, training=True)
-                #ic = y_o + 0.5
+                ic = dy_0 + 0.5
             
             dy2 = g.gradient(dy, x) #valor de la segunda derivada
             eq = dy2 + y_pred #Ecuación Diferencial a minimizar a cero
@@ -47,8 +59,7 @@ class ODEsolver(Sequential):
             ic1 = y_o1 - 1.
             
             
-            
-            loss = keras.losses.mean_squared_error(0., eq) + keras.losses.mean_squared_error(0., ic1) #+ keras.losses.mean_squared_error(0., ic1)
+            loss = keras.losses.mean_squared_error(0., eq) + keras.losses.mean_squared_error(0., ic1) + keras.losses.mean_squared_error(0., ic)
 
         # Apply grads
         grads = tape.gradient(loss, self.trainable_variables)
@@ -78,7 +89,9 @@ history = model.fit(x, epochs=500, verbose=1)
 
 x_testv = tf.linspace(-5,5,dat)
 a= model.predict(x_testv)
-plt.plot(x_testv, a, label='Predict')
-plt.plot(x_testv, (1*tf.math.cos(x)+0*tf.math.sin(x)), label='Actual')
+#print(a)
+plt.plot(x_testv, a, color='yellowgreen', label='Predict')
+plt.plot(x_testv, Solve(x), color = 'violet', label='Actual')
+plt.title('Gráfica ' + r'$Cos(x)-0.5*Sin(x)$')
 plt.legend()
 plt.show()
