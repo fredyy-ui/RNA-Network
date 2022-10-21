@@ -48,7 +48,7 @@ class ODEsolver(Sequential):
 
                 #x_o =tf.zeros((batch_size,1))
                 #y_o = self(x_o, training=True)
-                ic = dy_0 + 0.5
+                ic = dy_0 + 0.5 # Condición y'[0]=-0.5
             
             dy2 = g.gradient(dy, x) #valor de la segunda derivada
             eq = dy2 + y_pred #Ecuación Diferencial a minimizar a cero
@@ -56,7 +56,7 @@ class ODEsolver(Sequential):
 
             x_o1 = tf.zeros((batch_size,1)) #condicion inical llena de zeros  
             y_o1 = self(x_o1, training=True) #evalua la red en esa condicion 
-            ic1 = y_o1 - 1.
+            ic1 = y_o1 - 1. # Condición y[0]=1
             
             
             loss = keras.losses.mean_squared_error(0., eq) + keras.losses.mean_squared_error(0., ic1) + keras.losses.mean_squared_error(0., ic)
@@ -81,13 +81,21 @@ model.summary()
 
 model.compile(optimizer=Adam(),metrics=['loss']) #RMSprop(learning_rate=0.01)
 
-dat=250
-x = tf.linspace(-5,5,dat)
+"""
+Neural network testing.
+Plot of analytical solution vs. the solution predicted by the network.
+"""
+
+NData = 300
+minV = -5
+maxV = 5
+
+x = tf.linspace(minV, maxV, NData)
 history = model.fit(x, epochs=500, verbose=1)
 
 
 
-x_testv = tf.linspace(-5,5,dat)
+x_testv = x
 a= model.predict(x_testv)
 #print(a)
 plt.plot(x_testv, a, color='yellowgreen', label='Predict')
